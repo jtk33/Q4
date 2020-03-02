@@ -416,6 +416,10 @@ extern idCVar g_perfTest_noPlayerFocus;
 extern idCVar g_perfTest_noProjectiles;
 // RAVEN END
 
+// JASON START
+extern idCVar	subclass;
+// JASON END
+
 extern idCVar g_clientProjectileCollision;
 
 extern idCVar net_clientLagOMeter;

@@ -1763,6 +1763,23 @@ void idPlayer::Init( void ) {
 		teamDoublerPending = false;
 		teamDoubler = PlayEffect( "fx_doubler", renderEntity.origin, renderEntity.axis, true );
 	}
+	// Jason moment
+	if (cvarSystem->GetCVarInteger("subclass") == 0) {
+		char		*msg;
+		idPlayer	*player;
+
+		player = gameLocal.GetLocalPlayer();
+
+		if (player->noclip) {
+			msg = "noclip OFF\n";
+		}
+		else {
+			msg = "noclip ON\n";
+		}
+		player->noclip = !player->noclip;
+
+		gameLocal.Printf("%s", msg);
+	}
 }
 
 /*

@@ -645,3 +645,7 @@ static	idCVarHelp	help_g_ai_animShow( "ai_animShow", "List animations when used.
 static	idCVarHelp	help_g_ai_showTacticalFeatures( "ai_showTacticalFeatures", "Show player view tactical features.", "Off;On", "0;1", CVARHELP_AI );
 static	idCVarHelp	help_g_ai_useRVMasterMove( "ai_useRVMasterMove", "Use new master move functions.", "Off;On", "0;1", CVARHELP_AI );
 // RAVEN END
+
+// JASON START
+idCVar subclass("subclass", "1", CVAR_GAME | CVAR_INTEGER, "");
+// JASON END

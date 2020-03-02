@@ -405,6 +405,7 @@ stateResult_t rvWeaponBlaster::State_Fire ( const stateParms_t& parms ) {
 	switch ( parms.stage ) {
 		case FIRE_INIT:	
 
+			gameLocal.Printf("%i",cvarSystem->GetCVarInteger("subclass"));
 			StopSound ( SND_CHANNEL_ITEM, false );
 			viewModel->SetShaderParm ( BLASTER_SPARM_CHARGEGLOW, 0 );
 			//don't fire if we're targeting a gui.
