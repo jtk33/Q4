@@ -693,7 +693,94 @@ stateResult_t idAI::State_Killed ( const stateParms_t& parms ) {
 	} else { 
 		PostState ( "State_Dead" );
 	}
-	
+	//Jason was here
+	idPlayer	*player;
+
+	player = gameLocal.GetLocalPlayer();
+
+	cvarSystem->SetCVarInteger("xp", (cvarSystem->GetCVarInteger("xp") + 1));
+	if (cvarSystem->GetCVarInteger("xp") >= 20){
+		cvarSystem->SetCVarInteger("lv", 5);
+		if (cvarSystem->GetCVarInteger("subclass") == 0) {
+
+			player->GiveItem("weapon_hyperblaster");
+		}
+		else if (cvarSystem->GetCVarInteger("subclass") == 1) {
+
+			player->GiveItem("weapon_hyperblaster");
+		}
+		else if (cvarSystem->GetCVarInteger("subclass") == 2) {
+
+			player->GiveItem("weapon_hyperblaster");
+		}
+		else if (cvarSystem->GetCVarInteger("subclass") == 3) {
+
+			player->health = player->health + 16;
+		}
+	}
+	else if (cvarSystem->GetCVarInteger("xp") >= 15){
+		cvarSystem->SetCVarInteger("lv", 4);
+		if (cvarSystem->GetCVarInteger("subclass") == 0) {
+
+			player->GiveItem("weapon_hyperblaster");
+		}
+		else if (cvarSystem->GetCVarInteger("subclass") == 1) {
+
+			player->GiveItem("weapon_hyperblaster");
+		}
+		else if (cvarSystem->GetCVarInteger("subclass") == 2) {
+
+			player->GiveItem("weapon_hyperblaster");
+		}
+		else if (cvarSystem->GetCVarInteger("subclass") == 3) {
+
+			player->health = player->health + 8;
+		}
+	}
+	else if (cvarSystem->GetCVarInteger("xp") >= 10){
+		cvarSystem->SetCVarInteger("lv", 3);
+		if (cvarSystem->GetCVarInteger("subclass") == 0) {
+
+			player->GiveItem("weapon_hyperblaster");
+		}
+		else if (cvarSystem->GetCVarInteger("subclass") == 1) {
+
+			player->GiveItem("weapon_hyperblaster");
+		}
+		else if (cvarSystem->GetCVarInteger("subclass") == 2) {
+
+			player->GiveItem("weapon_hyperblaster");
+		}
+		else if (cvarSystem->GetCVarInteger("subclass") == 3) {
+
+			player->health = player->health + 4;
+		}
+	}
+	else if (cvarSystem->GetCVarInteger("xp") >= 5){
+		cvarSystem->SetCVarInteger("lv", 2);
+		if (cvarSystem->GetCVarInteger("subclass") == 0) {
+
+			player->GiveItem("weapon_hyperblaster");
+		}
+		else if (cvarSystem->GetCVarInteger("subclass") == 1) {
+
+			player->GiveItem("weapon_hyperblaster");
+		}
+		else if (cvarSystem->GetCVarInteger("subclass") == 2) {
+
+			player->GiveItem("weapon_hyperblaster");
+		}
+		else if (cvarSystem->GetCVarInteger("subclass") == 3) {
+
+			player->health = player->health + 2;
+		}
+	}
+	else if (cvarSystem->GetCVarInteger("xp") < 5){
+		cvarSystem->SetCVarInteger("lv", 1);
+		if (cvarSystem->GetCVarInteger("subclass") == 3) {
+			player->health = player->health + 1;
+		}
+	}
 	return SRESULT_DONE;
 }
 

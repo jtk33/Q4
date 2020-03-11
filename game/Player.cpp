@@ -1783,22 +1783,7 @@ void idPlayer::Init( void ) {
 
 		player->GiveItem("weapon_blaster");
 	}
-	if (cvarSystem->GetCVarInteger("xp") >= 100){
-		cvarSystem->SetCVarInteger("lv", 5);
-	}
-	else if (cvarSystem->GetCVarInteger("xp") >= 60){
-		cvarSystem->SetCVarInteger("lv", 4);
-	}
-	else if (cvarSystem->GetCVarInteger("xp") >= 30){
-		cvarSystem->SetCVarInteger("lv", 3);
-	}
-	else if (cvarSystem->GetCVarInteger("xp") >= 10){
-		cvarSystem->SetCVarInteger("lv", 2);
-	}
-	else if (cvarSystem->GetCVarInteger("xp") < 10){
-		cvarSystem->SetCVarInteger("lv", 1);
 
-	}
 }
 
 /*
@@ -3425,6 +3410,13 @@ void idPlayer::UpdateHudStats( idUserInterface *_hud ) {
 	
 	assert ( _hud );
 
+	//Jason
+	char buff[500];
+	int level = cvarSystem->GetCVarInteger("lv");
+	sprintf_s(buff, "%d", level);
+	_hud->SetStateString("lv", buff);
+
+
 	temp = _hud->State().GetInt ( "player_health", "-1" );
 	if ( temp != health ) {		
 		_hud->SetStateInt   ( "player_healthDelta", temp == -1 ? 0 : (temp - health) );
@@ -3469,11 +3461,7 @@ void idPlayer::UpdateHudStats( idUserInterface *_hud ) {
 		UpdateHudAmmo( _hud );
 	}
 	
-	_hud->StateChanged( gameLocal.time );
-	//Jason
-	int level = 0;
-	level = cvarSystem->GetCVarInteger("lv");
-	_hud->SetStateString("lvlnum", "" + 1);
+	_hud->StateChanged(gameLocal.time);
 }
 
 /*
