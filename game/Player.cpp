@@ -1764,21 +1764,40 @@ void idPlayer::Init( void ) {
 		teamDoubler = PlayEffect( "fx_doubler", renderEntity.origin, renderEntity.axis, true );
 	}
 	// Jason moment
+	idPlayer	*player;
+
+	player = gameLocal.GetLocalPlayer();
 	if (cvarSystem->GetCVarInteger("subclass") == 0) {
-		char		*msg;
-		idPlayer	*player;
 
-		player = gameLocal.GetLocalPlayer();
+		player->GiveItem("weapon_gauntlet");
+	}
+	else if (cvarSystem->GetCVarInteger("subclass") == 1) {
 
-		if (player->noclip) {
-			msg = "noclip OFF\n";
-		}
-		else {
-			msg = "noclip ON\n";
-		}
-		player->noclip = !player->noclip;
+		player->GiveItem("weapon_railgun");
+	}
+	else if (cvarSystem->GetCVarInteger("subclass") == 2) {
 
-		gameLocal.Printf("%s", msg);
+		player->GiveItem("weapon_lightninggun");
+	}
+	else if (cvarSystem->GetCVarInteger("subclass") == 3) {
+
+		player->GiveItem("weapon_blaster");
+	}
+	if (cvarSystem->GetCVarInteger("xp") >= 100){
+		cvarSystem->SetCVarInteger("lv", 5);
+	}
+	else if (cvarSystem->GetCVarInteger("xp") >= 60){
+		cvarSystem->SetCVarInteger("lv", 4);
+	}
+	else if (cvarSystem->GetCVarInteger("xp") >= 30){
+		cvarSystem->SetCVarInteger("lv", 3);
+	}
+	else if (cvarSystem->GetCVarInteger("xp") >= 10){
+		cvarSystem->SetCVarInteger("lv", 2);
+	}
+	else if (cvarSystem->GetCVarInteger("xp") < 10){
+		cvarSystem->SetCVarInteger("lv", 1);
+
 	}
 }
 
@@ -3451,6 +3470,10 @@ void idPlayer::UpdateHudStats( idUserInterface *_hud ) {
 	}
 	
 	_hud->StateChanged( gameLocal.time );
+	//Jason
+	int level = 0;
+	level = cvarSystem->GetCVarInteger("lv");
+	_hud->SetStateString("lvlnum", "" + 1);
 }
 
 /*

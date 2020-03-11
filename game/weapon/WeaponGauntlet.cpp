@@ -283,6 +283,7 @@ void rvWeaponGauntlet::Attack ( void ) {
 	if ( gameLocal.time > nextAttackTime ) {					
 		if ( ent ) {
 			if ( ent->fl.takedamage ) {
+
 				float dmgScale = 1.0f;
 				dmgScale *= owner->PowerUpModifier( PMOD_MELEE_DAMAGE );
 				ent->Damage ( owner, owner, playerViewAxis[0], spawnArgs.GetString ( "def_damage" ), dmgScale, 0 );

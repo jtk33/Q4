@@ -418,6 +418,8 @@ extern idCVar g_perfTest_noProjectiles;
 
 // JASON START
 extern idCVar	subclass;
+extern idCVar	xp;
+extern idCVar	lv;
 // JASON END
 
 extern idCVar g_clientProjectileCollision;

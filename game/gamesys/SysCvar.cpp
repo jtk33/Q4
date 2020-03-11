@@ -648,4 +648,6 @@ static	idCVarHelp	help_g_ai_useRVMasterMove( "ai_useRVMasterMove", "Use new mast
 
 // JASON START
 idCVar subclass("subclass", "1", CVAR_GAME | CVAR_INTEGER, "");
+idCVar xp("xp", "1", CVAR_GAME | CVAR_INTEGER, "");
+idCVar lv("lv", "1", CVAR_GAME | CVAR_INTEGER, "");
 // JASON END
