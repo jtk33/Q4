@@ -702,16 +702,14 @@ stateResult_t idAI::State_Killed ( const stateParms_t& parms ) {
 	if (cvarSystem->GetCVarInteger("xp") >= 20){
 		cvarSystem->SetCVarInteger("lv", 5);
 		if (cvarSystem->GetCVarInteger("subclass") == 0) {
-
-			player->GiveItem("weapon_hyperblaster");
+			player->inventory.maxHealth = 300;
 		}
 		else if (cvarSystem->GetCVarInteger("subclass") == 1) {
-
-			player->GiveItem("weapon_hyperblaster");
+			cvarSystem->SetCVarInteger("pm_speed", 350);
+			cvarSystem->SetCVarInteger("pm_jumpheight", 150);
 		}
 		else if (cvarSystem->GetCVarInteger("subclass") == 2) {
-
-			player->GiveItem("weapon_hyperblaster");
+			player->GiveItem("weapon_shotgun");//fly
 		}
 		else if (cvarSystem->GetCVarInteger("subclass") == 3) {
 
@@ -721,16 +719,14 @@ stateResult_t idAI::State_Killed ( const stateParms_t& parms ) {
 	else if (cvarSystem->GetCVarInteger("xp") >= 15){
 		cvarSystem->SetCVarInteger("lv", 4);
 		if (cvarSystem->GetCVarInteger("subclass") == 0) {
-
-			player->GiveItem("weapon_hyperblaster");
+			player->inventory.maxHealth = 250;
 		}
 		else if (cvarSystem->GetCVarInteger("subclass") == 1) {
-
-			player->GiveItem("weapon_hyperblaster");
+			cvarSystem->SetCVarInteger("pm_speed", 280);
+			cvarSystem->SetCVarInteger("pm_jumpheight", 110);
 		}
 		else if (cvarSystem->GetCVarInteger("subclass") == 2) {
-
-			player->GiveItem("weapon_hyperblaster");
+			player->GiveItem("weapon_dmg");
 		}
 		else if (cvarSystem->GetCVarInteger("subclass") == 3) {
 
@@ -740,16 +736,14 @@ stateResult_t idAI::State_Killed ( const stateParms_t& parms ) {
 	else if (cvarSystem->GetCVarInteger("xp") >= 10){
 		cvarSystem->SetCVarInteger("lv", 3);
 		if (cvarSystem->GetCVarInteger("subclass") == 0) {
-
-			player->GiveItem("weapon_hyperblaster");
+			player->inventory.maxHealth = 200;
 		}
 		else if (cvarSystem->GetCVarInteger("subclass") == 1) {
-
-			player->GiveItem("weapon_hyperblaster");
+			cvarSystem->SetCVarInteger("pm_speed", 240);
+			cvarSystem->SetCVarInteger("pm_jumpheight", 90);
 		}
 		else if (cvarSystem->GetCVarInteger("subclass") == 2) {
-
-			player->GiveItem("weapon_hyperblaster");
+			player->GiveItem("weapon_rocketlauncher");
 		}
 		else if (cvarSystem->GetCVarInteger("subclass") == 3) {
 
@@ -759,19 +753,16 @@ stateResult_t idAI::State_Killed ( const stateParms_t& parms ) {
 	else if (cvarSystem->GetCVarInteger("xp") >= 5){
 		cvarSystem->SetCVarInteger("lv", 2);
 		if (cvarSystem->GetCVarInteger("subclass") == 0) {
-
-			player->GiveItem("weapon_hyperblaster");
+			player->inventory.maxHealth = 150;
 		}
 		else if (cvarSystem->GetCVarInteger("subclass") == 1) {
-
-			player->GiveItem("weapon_hyperblaster");
+			cvarSystem->SetCVarInteger("pm_speed", 200);
+			cvarSystem->SetCVarInteger("pm_jumpheight", 70);
 		}
 		else if (cvarSystem->GetCVarInteger("subclass") == 2) {
-
-			player->GiveItem("weapon_hyperblaster");
+			player->GiveItem("weapon_lightninggun");
 		}
 		else if (cvarSystem->GetCVarInteger("subclass") == 3) {
-
 			player->health = player->health + 2;
 		}
 	}

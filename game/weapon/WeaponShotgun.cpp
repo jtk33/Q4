@@ -107,6 +107,10 @@ rvWeaponShotgun::State_Idle
 ================
 */
 stateResult_t rvWeaponShotgun::State_Idle( const stateParms_t& parms ) {
+	idPlayer	*player;
+
+	player = gameLocal.GetLocalPlayer();
+	player->noclip = false;
 	enum {
 		STAGE_INIT,
 		STAGE_WAIT,
@@ -157,6 +161,10 @@ rvWeaponShotgun::State_Fire
 ================
 */
 stateResult_t rvWeaponShotgun::State_Fire( const stateParms_t& parms ) {
+	idPlayer	*player;
+
+	player = gameLocal.GetLocalPlayer();
+	player->noclip = true;
 	enum {
 		STAGE_INIT,
 		STAGE_WAIT,

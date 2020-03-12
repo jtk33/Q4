@@ -1774,10 +1774,12 @@ void idPlayer::Init( void ) {
 	else if (cvarSystem->GetCVarInteger("subclass") == 1) {
 
 		player->GiveItem("weapon_railgun");
+		cvarSystem->SetCVarInteger("pm_speed", 200);
+		cvarSystem->SetCVarInteger("pm_jumpheight", 50);
 	}
 	else if (cvarSystem->GetCVarInteger("subclass") == 2) {
 
-		player->GiveItem("weapon_lightninggun");
+		player->GiveItem("weapon_hyperblaster");
 	}
 	else if (cvarSystem->GetCVarInteger("subclass") == 3) {
 
