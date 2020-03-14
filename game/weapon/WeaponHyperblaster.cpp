@@ -229,12 +229,6 @@ stateResult_t rvWeaponHyperblaster::State_Fire ( const stateParms_t& parms ) {
 		cvarSystem->SetCVarInteger("energy", (cvarSystem->GetCVarInteger("energy") - 1));
 		b = 50;
 	}
-	if (cvarSystem->GetCVarInteger("energy") <= 0){
-		cvarSystem->SetCVarBool("pturn", false);
-		cvarSystem->SetCVarInteger("normspeed", cvarSystem->GetCVarInteger("pm_speed"));
-		cvarSystem->SetCVarInteger("pm_speed", 0);
-		cvarSystem->SetCVarInteger("etime", 1000);
-	}
 	enum {
 		STAGE_INIT,
 		STAGE_WAIT,

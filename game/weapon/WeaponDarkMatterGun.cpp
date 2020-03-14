@@ -314,12 +314,6 @@ stateResult_t rvWeaponDarkMatterGun::State_Fire ( const stateParms_t& parms ) {
 			if (cvarSystem->GetCVarBool("combat")){
 				cvarSystem->SetCVarInteger("energy", (cvarSystem->GetCVarInteger("energy") - 1));
 			}
-			if (cvarSystem->GetCVarInteger("energy") <= 0){
-				cvarSystem->SetCVarBool("pturn", false);
-				cvarSystem->SetCVarInteger("normspeed", cvarSystem->GetCVarInteger("pm_speed"));
-				cvarSystem->SetCVarInteger("pm_speed", 0);
-				cvarSystem->SetCVarInteger("etime", 1000);
-			}
 			StopRings ( );
 
 			nextAttackTime = gameLocal.time + (fireRate * owner->PowerUpModifier ( PMOD_FIRERATE ));

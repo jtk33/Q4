@@ -220,12 +220,6 @@ void rvWeaponGauntlet::Attack ( void ) {
 		i = 50;
 		}
 	}
-	if (cvarSystem->GetCVarInteger("energy") <= 0){
-		cvarSystem->SetCVarBool("pturn", false);
-		cvarSystem->SetCVarInteger("normspeed", cvarSystem->GetCVarInteger("pm_speed"));
-		cvarSystem->SetCVarInteger("pm_speed", 0);
-		cvarSystem->SetCVarInteger("etime", 1000);
-	}
 	trace_t		tr;
 	idEntity*	ent;
 	
