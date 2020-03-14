@@ -581,16 +581,40 @@ idPlayer::State_Legs_Run_Forward
 ================
 */
 stateResult_t idPlayer::State_Legs_Run_Forward ( const stateParms_t& parms ) {
-	if ( !pfl.jump && pfl.onGround && !pfl.crouch && !pfl.backward && pfl.forward ) {
-		if( usercmd.buttons & BUTTON_RUN ) {
-			return SRESULT_WAIT;
-		} else {
-			PlayCycle( ANIMCHANNEL_LEGS, "walk_forward", parms.blendFrames );
-			PostAnimState ( ANIMCHANNEL_LEGS, "Legs_Walk_Forward", parms.blendFrames );
-			return SRESULT_DONE;
+
+	if (cvarSystem->GetCVarBool("pturn") && cvarSystem->GetCVarBool("combat")){
+			cvarSystem->SetCVarInteger("menergy", (cvarSystem->GetCVarInteger("menergy") - 1));
+			if (cvarSystem->GetCVarInteger("menergy") <= 0){
+				cvarSystem->SetCVarInteger("energy", (cvarSystem->GetCVarInteger("energy") - 1));
+				cvarSystem->SetCVarInteger("menergy", 50);
+			}
+			if (cvarSystem->GetCVarInteger("energy") <= 0){
+				cvarSystem->SetCVarBool("pturn", false);
+				cvarSystem->SetCVarInteger("normspeed", cvarSystem->GetCVarInteger("pm_speed"));
+				cvarSystem->SetCVarInteger("pm_speed", 0);
+				cvarSystem->SetCVarInteger("etime", 1000);
+			}
 		}
-	}
-	PostAnimState ( ANIMCHANNEL_LEGS, "Legs_Idle", parms.blendFrames );
+		/*else{
+			cvarSystem->SetCVarInteger("etime", (cvarSystem->GetCVarInteger("etime") - 1));
+			if (cvarSystem->GetCVarInteger("etime") <= 0){
+				gameLocal.Printf("%d", cvarSystem->GetCVarInteger("etime"));
+				gameLocal.Printf("bruh");
+				cvarSystem->SetCVarBool("pturn", true);
+				cvarSystem->SetCVarInteger("energy", 8);
+			}
+		}*/
+		if (!pfl.jump && pfl.onGround && !pfl.crouch && !pfl.backward && pfl.forward) {
+			if (usercmd.buttons & BUTTON_RUN) {
+				return SRESULT_WAIT;
+			}
+			else {
+				PlayCycle(ANIMCHANNEL_LEGS, "walk_forward", parms.blendFrames);
+				PostAnimState(ANIMCHANNEL_LEGS, "Legs_Walk_Forward", parms.blendFrames);
+				return SRESULT_DONE;
+			}
+		}
+		PostAnimState(ANIMCHANNEL_LEGS, "Legs_Idle", parms.blendFrames);
 	return SRESULT_DONE;
 }
 
@@ -600,6 +624,19 @@ idPlayer::State_Legs_Run_Backward
 ================
 */
 stateResult_t idPlayer::State_Legs_Run_Backward ( const stateParms_t& parms ) {
+	if (cvarSystem->GetCVarBool("pturn") && cvarSystem->GetCVarBool("combat")){
+		cvarSystem->SetCVarInteger("menergy", (cvarSystem->GetCVarInteger("menergy") - 1));
+		if (cvarSystem->GetCVarInteger("menergy") <= 0){
+			cvarSystem->SetCVarInteger("energy", (cvarSystem->GetCVarInteger("energy") - 1));
+			cvarSystem->SetCVarInteger("menergy", 50);
+		}
+		if (cvarSystem->GetCVarInteger("energy") <= 0){
+			cvarSystem->SetCVarBool("pturn", false);
+			cvarSystem->SetCVarInteger("normspeed", cvarSystem->GetCVarInteger("pm_speed"));
+			cvarSystem->SetCVarInteger("pm_speed", 0);
+			cvarSystem->SetCVarInteger("etime", 1000);
+		}
+	}
 	if ( !pfl.jump && pfl.onGround && !pfl.crouch && !pfl.forward && pfl.backward ) {
 		if( usercmd.buttons & BUTTON_RUN ) {
 			return SRESULT_WAIT;
@@ -619,6 +656,19 @@ idPlayer::State_Legs_Run_Left
 ================
 */
 stateResult_t idPlayer::State_Legs_Run_Left ( const stateParms_t& parms ) {
+	if (cvarSystem->GetCVarBool("pturn") && cvarSystem->GetCVarBool("combat")){
+		cvarSystem->SetCVarInteger("menergy", (cvarSystem->GetCVarInteger("menergy") - 1));
+		if (cvarSystem->GetCVarInteger("menergy") <= 0){
+			cvarSystem->SetCVarInteger("energy", (cvarSystem->GetCVarInteger("energy") - 1));
+			cvarSystem->SetCVarInteger("menergy", 50);
+		}
+		if (cvarSystem->GetCVarInteger("energy") <= 0){
+			cvarSystem->SetCVarBool("pturn", false);
+			cvarSystem->SetCVarInteger("normspeed", cvarSystem->GetCVarInteger("pm_speed"));
+			cvarSystem->SetCVarInteger("pm_speed", 0);
+			cvarSystem->SetCVarInteger("etime", 1000);
+		}
+	}
 	if ( !pfl.jump && pfl.onGround && !pfl.crouch && (pfl.forward == pfl.backward) && pfl.strafeLeft && !pfl.strafeRight ) {
 		if( usercmd.buttons & BUTTON_RUN ) {
 			return SRESULT_WAIT;
@@ -638,6 +688,19 @@ idPlayer::State_Legs_Run_Right
 ================
 */
 stateResult_t idPlayer::State_Legs_Run_Right ( const stateParms_t& parms ) {
+	if (cvarSystem->GetCVarBool("pturn") && cvarSystem->GetCVarBool("combat")){
+		cvarSystem->SetCVarInteger("menergy", (cvarSystem->GetCVarInteger("menergy") - 1));
+		if (cvarSystem->GetCVarInteger("menergy") <= 0){
+			cvarSystem->SetCVarInteger("energy", (cvarSystem->GetCVarInteger("energy") - 1));
+			cvarSystem->SetCVarInteger("menergy", 50);
+		}
+		if (cvarSystem->GetCVarInteger("energy") <= 0){
+			cvarSystem->SetCVarBool("pturn", false);
+			cvarSystem->SetCVarInteger("normspeed", cvarSystem->GetCVarInteger("pm_speed"));
+			cvarSystem->SetCVarInteger("pm_speed", 0);
+			cvarSystem->SetCVarInteger("etime", 1000);
+		}
+	}
 	if ( !pfl.jump && pfl.onGround && !pfl.crouch && (pfl.forward == pfl.backward) && pfl.strafeRight && !pfl.strafeLeft ) {
 		if( usercmd.buttons & BUTTON_RUN ) {
 			return SRESULT_WAIT;
@@ -657,6 +720,19 @@ idPlayer::State_Legs_Walk_Forward
 ================
 */
 stateResult_t idPlayer::State_Legs_Walk_Forward ( const stateParms_t& parms ) {
+	if (cvarSystem->GetCVarBool("pturn") && cvarSystem->GetCVarBool("combat")){
+		cvarSystem->SetCVarInteger("menergy", (cvarSystem->GetCVarInteger("menergy") - 1));
+		if (cvarSystem->GetCVarInteger("menergy") <= 0){
+			cvarSystem->SetCVarInteger("energy", (cvarSystem->GetCVarInteger("energy") - 1));
+			cvarSystem->SetCVarInteger("menergy", 50);
+		}
+		if (cvarSystem->GetCVarInteger("energy") <= 0){
+			cvarSystem->SetCVarBool("pturn", false);
+			cvarSystem->SetCVarInteger("normspeed", cvarSystem->GetCVarInteger("pm_speed"));
+			cvarSystem->SetCVarInteger("pm_speed", 0);
+			cvarSystem->SetCVarInteger("etime", 1000);
+		}
+	}
 	if ( !pfl.jump && pfl.onGround && !pfl.crouch && !pfl.backward && pfl.forward ) {
 		if( !(usercmd.buttons & BUTTON_RUN) ) {
 			return SRESULT_WAIT;
@@ -676,6 +752,19 @@ idPlayer::State_Legs_Walk_Backward
 ================
 */
 stateResult_t idPlayer::State_Legs_Walk_Backward ( const stateParms_t& parms ) {
+	if (cvarSystem->GetCVarBool("pturn") && cvarSystem->GetCVarBool("combat")){
+		cvarSystem->SetCVarInteger("menergy", (cvarSystem->GetCVarInteger("menergy") - 1));
+		if (cvarSystem->GetCVarInteger("menergy") <= 0){
+			cvarSystem->SetCVarInteger("energy", (cvarSystem->GetCVarInteger("energy") - 1));
+			cvarSystem->SetCVarInteger("menergy", 50);
+		}
+		if (cvarSystem->GetCVarInteger("energy") <= 0){
+			cvarSystem->SetCVarBool("pturn", false);
+			cvarSystem->SetCVarInteger("normspeed", cvarSystem->GetCVarInteger("pm_speed"));
+			cvarSystem->SetCVarInteger("pm_speed", 0);
+			cvarSystem->SetCVarInteger("etime", 1000);
+		}
+	}
 	if ( !pfl.jump && pfl.onGround && !pfl.crouch && !pfl.forward && pfl.backward ) {
 		if( !(usercmd.buttons & BUTTON_RUN) ) {
 			return SRESULT_WAIT;
@@ -695,6 +784,19 @@ idPlayer::State_Legs_Walk_Left
 ================
 */
 stateResult_t idPlayer::State_Legs_Walk_Left ( const stateParms_t& parms ) {
+	if (cvarSystem->GetCVarBool("pturn") && cvarSystem->GetCVarBool("combat")){
+		cvarSystem->SetCVarInteger("menergy", (cvarSystem->GetCVarInteger("menergy") - 1));
+		if (cvarSystem->GetCVarInteger("menergy") <= 0){
+			cvarSystem->SetCVarInteger("energy", (cvarSystem->GetCVarInteger("energy") - 1));
+			cvarSystem->SetCVarInteger("menergy", 50);
+		}
+		if (cvarSystem->GetCVarInteger("energy") <= 0){
+			cvarSystem->SetCVarBool("pturn", false);
+			cvarSystem->SetCVarInteger("normspeed", cvarSystem->GetCVarInteger("pm_speed"));
+			cvarSystem->SetCVarInteger("pm_speed", 0);
+			cvarSystem->SetCVarInteger("etime", 1000);
+		}
+	}
 	if ( !pfl.jump && pfl.onGround && !pfl.crouch && (pfl.forward == pfl.backward) && pfl.strafeLeft && !pfl.strafeRight ) {
 		if( !(usercmd.buttons & BUTTON_RUN) ) {
 			return SRESULT_WAIT;
@@ -714,6 +816,19 @@ idPlayer::State_Legs_Walk_Right
 ================
 */
 stateResult_t idPlayer::State_Legs_Walk_Right ( const stateParms_t& parms ) {
+	if (cvarSystem->GetCVarBool("pturn") && cvarSystem->GetCVarBool("combat")){
+		cvarSystem->SetCVarInteger("menergy", (cvarSystem->GetCVarInteger("menergy") - 1));
+		if (cvarSystem->GetCVarInteger("menergy") <= 0){
+			cvarSystem->SetCVarInteger("energy", (cvarSystem->GetCVarInteger("energy") - 1));
+			cvarSystem->SetCVarInteger("menergy", 50);
+		}
+		if (cvarSystem->GetCVarInteger("energy") <= 0){
+			cvarSystem->SetCVarBool("pturn", false);
+			cvarSystem->SetCVarInteger("normspeed", cvarSystem->GetCVarInteger("pm_speed"));
+			cvarSystem->SetCVarInteger("pm_speed", 0);
+			cvarSystem->SetCVarInteger("etime", 1000);
+		}
+	}
 	if ( !pfl.jump && pfl.onGround && !pfl.crouch && (pfl.forward == pfl.backward) && pfl.strafeRight && !pfl.strafeLeft ) {
 		if( !(usercmd.buttons & BUTTON_RUN) ) {
 			return SRESULT_WAIT;

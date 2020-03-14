@@ -1764,6 +1764,11 @@ void idPlayer::Init( void ) {
 		teamDoubler = PlayEffect( "fx_doubler", renderEntity.origin, renderEntity.axis, true );
 	}
 	// Jason moment
+	cvarSystem->SetCVarBool("combat", false);
+	cvarSystem->SetCVarBool("pturn", true);
+	cvarSystem->SetCVarInteger("energy", 8);
+	cvarSystem->SetCVarInteger("level", 1);
+	cvarSystem->SetCVarInteger("xp", 1);
 	idPlayer	*player;
 
 	player = gameLocal.GetLocalPlayer();
@@ -3415,9 +3420,12 @@ void idPlayer::UpdateHudStats( idUserInterface *_hud ) {
 	//Jason
 	char buff[500];
 	int level = cvarSystem->GetCVarInteger("lv");
-	sprintf_s(buff, "%d", level);
+	sprintf_s(buff, "Lv:%d", level);
 	_hud->SetStateString("lv", buff);
 
+	int energy = cvarSystem->GetCVarInteger("energy");
+	sprintf_s(buff, "E:%d", energy);
+	_hud->SetStateString("energy", buff);
 
 	temp = _hud->State().GetInt ( "player_health", "-1" );
 	if ( temp != health ) {		

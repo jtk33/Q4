@@ -1753,6 +1753,8 @@ void idAI::Killed( idEntity *inflictor, idEntity *attacker, int damage, const id
 		}
 		kv = spawnArgs.MatchPrefix( "def_drops", kv );
 	}
+	cvarSystem->SetCVarBool("combat", false);
+
 }
 
 /***********************************************************************
@@ -1998,103 +2000,121 @@ idAI::UpdateEnemy
 */
 void idAI::UpdateEnemy ( void ) {
 	predictedPath_t predictedPath;
-	
-	// If we lost our enemy then clear it out to be sure
-	if( !enemy.ent ) {
-		return;
+	if (cvarSystem->GetCVarInteger("etime") > 0){
+		cvarSystem->SetCVarInteger("etime", (cvarSystem->GetCVarInteger("etime") - 1));
 	}
-
-	// Rest to not being in fov
-	enemy.fl.inFov = false;
-
-	// Bail out if we arent queued to do a complex think
-	if ( aifl.simpleThink ) {
-		// Keep the fov flag up to date
-		if ( IsEnemyVisible ( ) ) { 
-			enemy.fl.inFov = CheckFOV( enemy.lastKnownPosition );
-		}
-	} else { 		
-		bool oldVisible;
-	
-		// Cache current enemy visiblity so we can see if it changes
-		oldVisible = IsEnemyVisible ( );
-	
-		// See if enemy still visible
-		UpdateEnemyVisibility  ( );
-
-		// If our enemy isnt visible but is within aware range then we know where he is
-		if ( !IsEnemyVisible ( ) && DistanceTo ( enemy.ent ) < combat.awareRange ) {
-			UpdateEnemyPosition( true );
-		} else {
-/*		
-			// check if we heard any sounds in the last frame
-			if ( enemyEnt == gameLocal.GetAlertActor() ) {
-				float dist = ( enemyEnt->GetPhysics()->GetOrigin() - physicsObj.GetOrigin() ).LengthSqr();
-				if ( dist < Square( combat.earRange ) ) {
-					SetEnemyPosition();
-				}
-			}
-*/
-		}
-
-		// Update fov
-		enemy.fl.inFov = CheckFOV( enemy.lastKnownPosition );
-
-		// Set enemy.visibleTime to the time when the visibility flag changed
-		if ( oldVisible != IsEnemyVisible ( ) ) {
-			// Just caught sight of the enemy after loosing him, delay the attack actions a bit
-			if ( !oldVisible && combat.attackSightDelay ) {
-				float delay;
-				if ( enemy.lastVisibleChangeTime ) {
-					// The longer the enemy has not been visible, the more we should delay
-					delay = idMath::ClampFloat ( 0.0f, 1.0f, (gameLocal.time - enemy.lastVisibleChangeTime) / AI_SIGHTDELAYSCALE );
-				} else {
-					// The enemy has never been visible so delay the full amount
-					delay = 1.0f;
-				}
-				// Add to the ranged attack timer providing its not already running a timer
-				if ( actionTimerRangedAttack.IsDone ( actionTime) ) {
-					actionTimerRangedAttack.Clear ( actionTime );
-					actionTimerRangedAttack.Add ( combat.attackSightDelay * delay, 0.5f );
-				}
-				// Add to the special attack timer providing its not already running a timer
-				if ( actionTimerSpecialAttack.IsDone ( actionTime ) ) {
-					actionTimerSpecialAttack.Clear ( actionTime );		
-					actionTimerSpecialAttack.Add ( combat.attackSightDelay * delay, 0.5f );
-				}
-			}
-
-			enemy.lastVisibleChangeTime = gameLocal.time;
-		}
-		
-		// Handler for visibility change
-		if ( oldVisible != IsEnemyVisible ( ) ) {
-			OnEnemyVisiblityChange ( oldVisible );
+	if (!cvarSystem->GetCVarBool("pturn")){
+		if (cvarSystem->GetCVarInteger("etime") <= 0){
+			gameLocal.Printf("%d", cvarSystem->GetCVarInteger("etime"));
+			gameLocal.Printf("bruh");
+			cvarSystem->SetCVarBool("pturn", true);
+			cvarSystem->SetCVarInteger("energy", 8);
+			cvarSystem->SetCVarInteger("menergy", 50);
+			cvarSystem->SetCVarInteger("pm_speed", cvarSystem->GetCVarInteger("normspeed"));
 		}
 	}
+	if (!cvarSystem->GetCVarBool("pturn") || !cvarSystem->GetCVarBool("combat")){
+		// If we lost our enemy then clear it out to be sure
+		if (!enemy.ent) {
+			return;
+		}
 
-	// Adjust smoothed linear and pushed velocities for enemies
-	if ( enemy.fl.visible ) {
-		enemy.smoothedLinearVelocity += ((enemy.ent->GetPhysics()->GetLinearVelocity ( ) - enemy.ent->GetPhysics()->GetPushedLinearVelocity ( ) - enemy.smoothedLinearVelocity) * enemy.smoothVelocityRate );
- 		enemy.smoothedPushedVelocity += ((enemy.ent->GetPhysics()->GetPushedLinearVelocity ( ) - enemy.smoothedPushedVelocity) * enemy.smoothVelocityRate );
- 	} else {
-		enemy.smoothedLinearVelocity -= (enemy.smoothedLinearVelocity * enemy.smoothVelocityRate );
- 		enemy.smoothedPushedVelocity -= (enemy.smoothedPushedVelocity * enemy.smoothVelocityRate );
-	} 	
-	
-	// Update enemy range
-	enemy.range	  = DistanceTo ( enemy.lastKnownPosition );
-	enemy.range2d = DistanceTo2d ( enemy.lastKnownPosition );
+		// Rest to not being in fov
+		enemy.fl.inFov = false;
 
-	// Calulcate the aggression scale
-	// Skill level 0: (1.0)
-	// Skill level 1: (1.0 - 1.25)
-	// Skill level 2: (1.0 - 1.5)
-	// Skill level 3: (1.0 - 1.75)
-	if ( combat.aggressiveRange > 0.0f ) {
-		combat.aggressiveScale = (g_skill.GetFloat() / MAX_SKILL_LEVELS);
-		combat.aggressiveScale *= 1.0f - idMath::ClampFloat ( 0.0f, 1.0f, enemy.range / combat.aggressiveRange );
-		combat.aggressiveScale += 1.0f;
+		// Bail out if we arent queued to do a complex think
+		if (aifl.simpleThink) {
+			// Keep the fov flag up to date
+			if (IsEnemyVisible()) {
+				enemy.fl.inFov = CheckFOV(enemy.lastKnownPosition);
+			}
+		}
+		else {
+			bool oldVisible;
+
+			// Cache current enemy visiblity so we can see if it changes
+			oldVisible = IsEnemyVisible();
+
+			// See if enemy still visible
+			UpdateEnemyVisibility();
+
+			// If our enemy isnt visible but is within aware range then we know where he is
+			if (!IsEnemyVisible() && DistanceTo(enemy.ent) < combat.awareRange) {
+				UpdateEnemyPosition(true);
+			}
+			else {
+				/*
+							// check if we heard any sounds in the last frame
+							if ( enemyEnt == gameLocal.GetAlertActor() ) {
+							float dist = ( enemyEnt->GetPhysics()->GetOrigin() - physicsObj.GetOrigin() ).LengthSqr();
+							if ( dist < Square( combat.earRange ) ) {
+							SetEnemyPosition();
+							}
+							}
+							*/
+			}
+
+			// Update fov
+			enemy.fl.inFov = CheckFOV(enemy.lastKnownPosition);
+
+			// Set enemy.visibleTime to the time when the visibility flag changed
+			if (oldVisible != IsEnemyVisible()) {
+				// Just caught sight of the enemy after loosing him, delay the attack actions a bit
+				if (!oldVisible && combat.attackSightDelay) {
+					float delay;
+					if (enemy.lastVisibleChangeTime) {
+						// The longer the enemy has not been visible, the more we should delay
+						delay = idMath::ClampFloat(0.0f, 1.0f, (gameLocal.time - enemy.lastVisibleChangeTime) / AI_SIGHTDELAYSCALE);
+					}
+					else {
+						// The enemy has never been visible so delay the full amount
+						delay = 1.0f;
+					}
+					// Add to the ranged attack timer providing its not already running a timer
+					if (actionTimerRangedAttack.IsDone(actionTime)) {
+						actionTimerRangedAttack.Clear(actionTime);
+						actionTimerRangedAttack.Add(combat.attackSightDelay * delay, 0.5f);
+					}
+					// Add to the special attack timer providing its not already running a timer
+					if (actionTimerSpecialAttack.IsDone(actionTime)) {
+						actionTimerSpecialAttack.Clear(actionTime);
+						actionTimerSpecialAttack.Add(combat.attackSightDelay * delay, 0.5f);
+					}
+				}
+
+				enemy.lastVisibleChangeTime = gameLocal.time;
+			}
+
+			// Handler for visibility change
+			if (oldVisible != IsEnemyVisible()) {
+				OnEnemyVisiblityChange(oldVisible);
+			}
+		}
+
+		// Adjust smoothed linear and pushed velocities for enemies
+		if (enemy.fl.visible) {
+			enemy.smoothedLinearVelocity += ((enemy.ent->GetPhysics()->GetLinearVelocity() - enemy.ent->GetPhysics()->GetPushedLinearVelocity() - enemy.smoothedLinearVelocity) * enemy.smoothVelocityRate);
+			enemy.smoothedPushedVelocity += ((enemy.ent->GetPhysics()->GetPushedLinearVelocity() - enemy.smoothedPushedVelocity) * enemy.smoothVelocityRate);
+		}
+		else {
+			enemy.smoothedLinearVelocity -= (enemy.smoothedLinearVelocity * enemy.smoothVelocityRate);
+			enemy.smoothedPushedVelocity -= (enemy.smoothedPushedVelocity * enemy.smoothVelocityRate);
+		}
+
+		// Update enemy range
+		enemy.range = DistanceTo(enemy.lastKnownPosition);
+		enemy.range2d = DistanceTo2d(enemy.lastKnownPosition);
+
+		// Calulcate the aggression scale
+		// Skill level 0: (1.0)
+		// Skill level 1: (1.0 - 1.25)
+		// Skill level 2: (1.0 - 1.5)
+		// Skill level 3: (1.0 - 1.75)
+		if (combat.aggressiveRange > 0.0f) {
+			combat.aggressiveScale = (g_skill.GetFloat() / MAX_SKILL_LEVELS);
+			combat.aggressiveScale *= 1.0f - idMath::ClampFloat(0.0f, 1.0f, enemy.range / combat.aggressiveRange);
+			combat.aggressiveScale += 1.0f;
+		}
 	}
 }
 
@@ -2465,21 +2485,25 @@ void idAI::RemoveProjectile( void ) {
 idAI::Attack
 =====================
 */
+//Jason
 bool idAI::Attack ( const char* attackName, jointHandle_t joint, idEntity* target, const idVec3& pushVelocity ) {
 	// Get the attack dictionary
-	const idDict* attackDict;
-	attackDict = gameLocal.FindEntityDefDict ( spawnArgs.GetString ( va("def_attack_%s", attackName ) ), false );
-	if ( !attackDict ) {
-		gameLocal.Error ( "could not find attack entityDef 'def_attack_%s (%s)' on AI entity %s", attackName, spawnArgs.GetString ( va("def_attack_%s", attackName ) ), GetName ( ) );
-	}
+	if (!cvarSystem->GetCVarBool("pturn") || !cvarSystem->GetCVarBool("combat")){
+		const idDict* attackDict;
+		attackDict = gameLocal.FindEntityDefDict(spawnArgs.GetString(va("def_attack_%s", attackName)), false);
+		if (!attackDict) {
+			gameLocal.Error("could not find attack entityDef 'def_attack_%s (%s)' on AI entity %s", attackName, spawnArgs.GetString(va("def_attack_%s", attackName)), GetName());
+		}
 
-	// Melee Attack?
-	if ( spawnArgs.GetBool ( va("attack_%s_melee", attackName ), "0" ) ) {
-		return AttackMelee ( attackName, attackDict );
-	}
+		// Melee Attack?
+		if (spawnArgs.GetBool(va("attack_%s_melee", attackName), "0")) {
+			return AttackMelee(attackName, attackDict);
+		}
 
-	// Ranged attack (hitscan or projectile)?
-	return ( AttackRanged ( attackName, attackDict, joint, target, pushVelocity ) != NULL );
+		// Ranged attack (hitscan or projectile)?
+		return (AttackRanged(attackName, attackDict, joint, target, pushVelocity) != NULL);
+	}
+	return false;
 }
 
 /*

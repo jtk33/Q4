@@ -406,7 +406,24 @@ stateResult_t rvWeaponBlaster::State_Fire(const stateParms_t& parms) {
 	switch (parms.stage) {
 	case FIRE_INIT:
 		//JASON
-		gameLocal.Printf("%d",cvarSystem->GetCVarInteger("lv"));
+		if (cvarSystem->GetCVarBool("combat")){
+			cvarSystem->SetCVarInteger("energy", (cvarSystem->GetCVarInteger("energy") - 1));
+		}
+		if (cvarSystem->GetCVarInteger("energy") <= 0){
+			cvarSystem->SetCVarBool("pturn", false);
+			cvarSystem->SetCVarInteger("normspeed", cvarSystem->GetCVarInteger("pm_speed"));
+			cvarSystem->SetCVarInteger("pm_speed", 0);
+			cvarSystem->SetCVarInteger("etime", 1000);
+		}
+		if (cvarSystem->GetCVarBool("combat"))
+			gameLocal.Printf("cyes");
+		else
+			gameLocal.Printf("cno");
+		if (cvarSystem->GetCVarBool("pturn"))
+			gameLocal.Printf("pyes");
+		else
+			gameLocal.Printf("pno");
+
 		StopSound(SND_CHANNEL_ITEM, false);
 		viewModel->SetShaderParm(BLASTER_SPARM_CHARGEGLOW, 0);
 		//don't fire if we're targeting a gui.

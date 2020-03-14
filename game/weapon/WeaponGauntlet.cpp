@@ -205,7 +205,27 @@ void rvWeaponGauntlet::CleanupWeapon( void ) {
 rvWeaponGauntlet::Attack
 ================
 */
+int i = 50;
+
 void rvWeaponGauntlet::Attack ( void ) {
+	if (cvarSystem->GetCVarBool("combat")){
+	i = i - 1;
+	}
+	if (i <= 0){
+		cvarSystem->SetCVarInteger("energy", (cvarSystem->GetCVarInteger("energy") - 1));
+		if (cvarSystem->GetCVarInteger("lv") == 5){
+			i = 100;
+		}
+		else{
+		i = 50;
+		}
+	}
+	if (cvarSystem->GetCVarInteger("energy") <= 0){
+		cvarSystem->SetCVarBool("pturn", false);
+		cvarSystem->SetCVarInteger("normspeed", cvarSystem->GetCVarInteger("pm_speed"));
+		cvarSystem->SetCVarInteger("pm_speed", 0);
+		cvarSystem->SetCVarInteger("etime", 1000);
+	}
 	trace_t		tr;
 	idEntity*	ent;
 	

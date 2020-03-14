@@ -808,7 +808,16 @@ stateResult_t rvWeaponLightningGun::State_Idle( const stateParms_t& parms ) {
 rvWeaponLightningGun::State_Fire
 ================
 */
+int g = 10;
 stateResult_t rvWeaponLightningGun::State_Fire( const stateParms_t& parms ) {
+
+	if (cvarSystem->GetCVarBool("combat")){
+		g = g - 1;
+	}
+	if (g <= 0){
+		cvarSystem->SetCVarInteger("energy", (cvarSystem->GetCVarInteger("energy") - 1));
+		g = 10;
+	}
 	enum {
 		STAGE_INIT,
 		STAGE_ATTACKLOOP,

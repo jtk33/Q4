@@ -420,6 +420,12 @@ extern idCVar g_perfTest_noProjectiles;
 extern idCVar	subclass;
 extern idCVar	xp;
 extern idCVar	lv;
+extern idCVar	combat;
+extern idCVar	energy;
+extern idCVar	menergy;
+extern idCVar	etime;
+extern idCVar	normspeed;
+
 // JASON END
 
 extern idCVar g_clientProjectileCollision;

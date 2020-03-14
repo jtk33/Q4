@@ -650,4 +650,10 @@ static	idCVarHelp	help_g_ai_useRVMasterMove( "ai_useRVMasterMove", "Use new mast
 idCVar subclass("subclass", "1", CVAR_GAME | CVAR_INTEGER, "");
 idCVar xp("xp", "1", CVAR_GAME | CVAR_INTEGER, "");
 idCVar lv("lv", "1", CVAR_GAME | CVAR_INTEGER, "");
+idCVar combat("combat", "false", CVAR_GAME | CVAR_BOOL, "");
+idCVar pturn("pturn", "true", CVAR_GAME | CVAR_BOOL, "");
+idCVar energy("energy", "8", CVAR_GAME | CVAR_INTEGER, "");
+idCVar menergy("menergy", "50", CVAR_GAME | CVAR_INTEGER, "");//movement energy
+idCVar etime("etime", "0", CVAR_GAME | CVAR_INTEGER, "");//enemy turn time
+idCVar normspeed("normspeed", "0", CVAR_GAME | CVAR_INTEGER, "");
 // JASON END

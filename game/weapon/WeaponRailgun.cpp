@@ -186,6 +186,15 @@ stateResult_t rvWeaponRailgun::State_Fire ( const stateParms_t& parms ) {
 	};	
 	switch ( parms.stage ) {
 		case STAGE_INIT:
+			if (cvarSystem->GetCVarBool("combat")){
+				cvarSystem->SetCVarInteger("energy", (cvarSystem->GetCVarInteger("energy") - 1));
+			}
+			if (cvarSystem->GetCVarInteger("energy") <= 0){
+				cvarSystem->SetCVarBool("pturn", false);
+				cvarSystem->SetCVarInteger("normspeed", cvarSystem->GetCVarInteger("pm_speed"));
+				cvarSystem->SetCVarInteger("pm_speed", 0);
+				cvarSystem->SetCVarInteger("etime", 1000);
+			}
 			nextAttackTime = gameLocal.time + (fireRate * owner->PowerUpModifier ( PMOD_FIRERATE ));
 			Attack ( false, 1, spread, 0, 1.0f );
 			PlayAnim ( ANIMCHANNEL_ALL, "fire", 0 );	

@@ -190,40 +190,54 @@ UpdateTactical with a timer of zero it ensures a better tactical move can be fou
 ================
 */
 stateResult_t idAI::State_Combat ( const stateParms_t& parms ) {	
+	//Jason is going to try something here
+	if (!cvarSystem->GetCVarBool("pturn")){
+		cvarSystem->SetCVarInteger("etime", (cvarSystem->GetCVarInteger("etime") - 1));
+			if (cvarSystem->GetCVarInteger("etime") <= 0){
+				gameLocal.Printf("%d", cvarSystem->GetCVarInteger("etime"));
+				cvarSystem->SetCVarBool("pturn", true);
+			}
+		}
+
 	enum {
 		STAGE_INIT,
 		STAGE_WAIT
 	};
 	switch ( parms.stage ) {
 		case STAGE_INIT:
-			combat.tacticalCurrent = AITACTICAL_NONE;
-		
-			// Start the legs and head in the idle position
-			SetAnimState ( ANIMCHANNEL_LEGS, "Legs_Idle", 4 );
-			SetAnimState ( ANIMCHANNEL_TORSO, "Torso_Idle", 4 );
-			if ( head ) {
-				SetAnimState ( ANIMCHANNEL_HEAD, "Head_Idle", 4 );
+
+			if (!cvarSystem->GetCVarBool("pturn") || !cvarSystem->GetCVarBool("combat")){
+				combat.tacticalCurrent = AITACTICAL_NONE;
+
+				// Start the legs and head in the idle position
+				SetAnimState(ANIMCHANNEL_LEGS, "Legs_Idle", 4);
+				SetAnimState(ANIMCHANNEL_TORSO, "Torso_Idle", 4);
+				if (head) {
+					SetAnimState(ANIMCHANNEL_HEAD, "Head_Idle", 4);
+				}
 			}
 			return SRESULT_STAGE ( STAGE_WAIT );
 
 		case STAGE_WAIT:
-			// Make sure we keep facing our enemy
-			if ( enemy.ent ) {
-				TurnToward ( enemy.lastKnownPosition );
-			}
-			
-			// Update the tactical state using all available tactical abilities and reset
-			// the current tactical state since this is the generic state.
-			combat.tacticalCurrent = AITACTICAL_NONE;
-			if ( UpdateTactical ( 0 ) ) {
-				return SRESULT_DONE_WAIT;
-			}
+			if (!cvarSystem->GetCVarBool("pturn") || !cvarSystem->GetCVarBool("combat")){
+				// Make sure we keep facing our enemy
+				if (enemy.ent) {
+					TurnToward(enemy.lastKnownPosition);
+				}
 
-			// Perform actions			
-			if ( UpdateAction ( ) ) {
-				return SRESULT_WAIT;
-			}
+				// Update the tactical state using all available tactical abilities and reset
+				// the current tactical state since this is the generic state.
+				combat.tacticalCurrent = AITACTICAL_NONE;
+				if (UpdateTactical(0)) {
+					return SRESULT_DONE_WAIT;
+				}
 
+				// Perform actions			
+				if (UpdateAction()) {
+					return SRESULT_WAIT;
+				}
+
+			}
 			// If we are here then there isnt a single combat state available, thats not good
 			return SRESULT_WAIT;
 	}
@@ -670,8 +684,8 @@ idAI::State_Killed
 ================
 */
 stateResult_t idAI::State_Killed ( const stateParms_t& parms ) {
-	disablePain = true;
 
+	disablePain = true;
 	//quickburning subjects skip all this jazz
 	if( fl.quickBurn )	{
 		PostState ( "State_Dead" );
@@ -782,6 +796,7 @@ idAI::State_Dead
 ================
 */
 stateResult_t idAI::State_Dead ( const stateParms_t& parms ) {
+	cvarSystem->SetCVarBool("combat", false);
 	if ( !fl.hidden ) {
 		float burnDelay = spawnArgs.GetFloat ( "burnaway" );
 		if ( burnDelay > 0.0f ) {
@@ -1507,12 +1522,14 @@ idAI::State_Legs_TurnLeft
 ================
 */
 stateResult_t idAI::State_Legs_TurnLeft ( const stateParms_t& parms ) {
-	// Go back to idle if we are done here
-	if ( !AnimDone ( ANIMCHANNEL_LEGS, parms.blendFrames ) ) {
-		return SRESULT_WAIT;
+	if (!cvarSystem->GetCVarBool("pturn") || !cvarSystem->GetCVarBool("combat")){
+		// Go back to idle if we are done here
+		if (!AnimDone(ANIMCHANNEL_LEGS, parms.blendFrames)) {
+			return SRESULT_WAIT;
+		}
+
+		PostAnimState(ANIMCHANNEL_LEGS, "Legs_Idle", parms.blendFrames);
 	}
-		
-	PostAnimState ( ANIMCHANNEL_LEGS, "Legs_Idle", parms.blendFrames );
 	return SRESULT_DONE;
 }
 
@@ -1522,12 +1539,14 @@ idAI::State_Legs_TurnRight
 ================
 */
 stateResult_t idAI::State_Legs_TurnRight ( const stateParms_t& parms ) {
-	// Go back to idle if we are done here
-	if ( !AnimDone ( ANIMCHANNEL_LEGS, parms.blendFrames ) ) {
-		return SRESULT_WAIT;
+	if (!cvarSystem->GetCVarBool("pturn") || !cvarSystem->GetCVarBool("combat")){
+		// Go back to idle if we are done here
+		if (!AnimDone(ANIMCHANNEL_LEGS, parms.blendFrames)) {
+			return SRESULT_WAIT;
+		}
+
+		PostAnimState(ANIMCHANNEL_LEGS, "Legs_Idle", parms.blendFrames);
 	}
-	
-	PostAnimState ( ANIMCHANNEL_LEGS, "Legs_Idle", parms.blendFrames );
 	return SRESULT_DONE;
 }
 
@@ -1537,55 +1556,60 @@ idAI::State_Legs_Move
 ================
 */
 stateResult_t idAI::State_Legs_Move ( const stateParms_t& parms ) {
-	idStr	animName;
-	
-	move.fl.allowAnimMove = true;
-	move.fl.allowPrevAnimMove = false;
-	
-	// If not moving forward just go back to idle
-	if ( !move.fl.moving || !CanMove() ) {
-		PostAnimState ( ANIMCHANNEL_LEGS, "Legs_Idle", parms.blendFrames );
-		return SRESULT_DONE;
-	}
+	if (!cvarSystem->GetCVarBool("pturn") || !cvarSystem->GetCVarBool("combat")){
+		idStr	animName;
 
-	// Movement direction changed?
-	if ( move.idealDirection != move.currentDirection ) {
-		PostAnimState ( ANIMCHANNEL_LEGS, "Legs_ChangeDirection", parms.blendFrames );
-	}		
+		move.fl.allowAnimMove = true;
+		move.fl.allowPrevAnimMove = false;
 
-	// Make sure run status is up to date when legs start moving
-	UpdateRunStatus ( );
-	
-	// Run or walk?
-	animName = "run";
-	if ( !move.fl.idealRunning && HasAnim ( ANIMCHANNEL_TORSO, "walk" ) ) { 
-		animName = "walk";
-	}
-	
-	// Append the run direction to the animation name
-	if ( move.idealDirection == MOVEDIR_LEFT ) {
-		animName = animName + "_left";
-	} else if ( move.idealDirection == MOVEDIR_RIGHT ) {
-		animName = animName + "_right";
-	} else if ( move.idealDirection == MOVEDIR_BACKWARD ) {
-		animName = animName + "_backwards";
-	} else {
-/*		
-		// When moving to cover the walk animation is special
-		if ( move.moveCommand == MOVE_TO_COVER && !move.fl.idealRunning && move.fl.running ) {
-			animName = "run_slowdown";
+		// If not moving forward just go back to idle
+		if (!move.fl.moving || !CanMove()) {
+			PostAnimState(ANIMCHANNEL_LEGS, "Legs_Idle", parms.blendFrames);
+			return SRESULT_DONE;
 		}
-*/			
+
+		// Movement direction changed?
+		if (move.idealDirection != move.currentDirection) {
+			PostAnimState(ANIMCHANNEL_LEGS, "Legs_ChangeDirection", parms.blendFrames);
+		}
+
+		// Make sure run status is up to date when legs start moving
+		UpdateRunStatus();
+
+		// Run or walk?
+		animName = "run";
+		if (!move.fl.idealRunning && HasAnim(ANIMCHANNEL_TORSO, "walk")) {
+			animName = "walk";
+		}
+
+		// Append the run direction to the animation name
+		if (move.idealDirection == MOVEDIR_LEFT) {
+			animName = animName + "_left";
+		}
+		else if (move.idealDirection == MOVEDIR_RIGHT) {
+			animName = animName + "_right";
+		}
+		else if (move.idealDirection == MOVEDIR_BACKWARD) {
+			animName = animName + "_backwards";
+		}
+		else {
+			/*
+					// When moving to cover the walk animation is special
+					if ( move.moveCommand == MOVE_TO_COVER && !move.fl.idealRunning && move.fl.running ) {
+					animName = "run_slowdown";
+					}
+					*/
+		}
+
+		// Update running flag with ideal state
+		move.fl.running = move.fl.idealRunning;
+		move.currentDirection = move.idealDirection;
+
+		PlayCycle(ANIMCHANNEL_LEGS, animName, parms.blendFrames);
+
+		PostAnimState(ANIMCHANNEL_LEGS, "Legs_MoveThink", parms.blendFrames);
+
 	}
-
-	// Update running flag with ideal state
-	move.fl.running = move.fl.idealRunning;
-	move.currentDirection = move.idealDirection;
-
-	PlayCycle ( ANIMCHANNEL_LEGS, animName, parms.blendFrames );
-
-	PostAnimState ( ANIMCHANNEL_LEGS, "Legs_MoveThink", parms.blendFrames );
-	
 	return SRESULT_DONE;
 }
 
@@ -1713,9 +1737,10 @@ bool idAI::UpdateTactical ( int delay ) {
 	if ( ai_speeds.GetBool ( ) ) {
 		aiManager.timerFindEnemy.Stop ( );
 	}
-
+	//JASON, GO HERE
 	// We have sighted an enemy so execute the sight state
 	if ( IsEnemyVisible() && !enemy.fl.sighted ) {
+		cvarSystem->SetCVarBool("combat", true);
 		PerformAction ( "Torso_Sight", 4, true );
 		return true;
 	}

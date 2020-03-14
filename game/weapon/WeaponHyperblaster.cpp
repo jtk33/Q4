@@ -220,7 +220,21 @@ stateResult_t rvWeaponHyperblaster::State_Idle( const stateParms_t& parms ) {
 rvWeaponHyperblaster::State_Fire
 ================
 */
+int b = 50;
 stateResult_t rvWeaponHyperblaster::State_Fire ( const stateParms_t& parms ) {
+	if (cvarSystem->GetCVarBool("combat")){
+		b = b - 1;
+	}
+	if (b <= 0){
+		cvarSystem->SetCVarInteger("energy", (cvarSystem->GetCVarInteger("energy") - 1));
+		b = 50;
+	}
+	if (cvarSystem->GetCVarInteger("energy") <= 0){
+		cvarSystem->SetCVarBool("pturn", false);
+		cvarSystem->SetCVarInteger("normspeed", cvarSystem->GetCVarInteger("pm_speed"));
+		cvarSystem->SetCVarInteger("pm_speed", 0);
+		cvarSystem->SetCVarInteger("etime", 1000);
+	}
 	enum {
 		STAGE_INIT,
 		STAGE_WAIT,
